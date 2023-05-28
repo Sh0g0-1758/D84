@@ -423,6 +423,109 @@ tree *insertIntoBST(tree *root, int val)
     return root;
 }
 
+tree *deleteNode_from_BST(tree *root, int key)
+{
+    tree *temp = root;
+    tree *parent = root;
+    while (temp != NULL)
+    {
+        if (temp->data > key)
+        {
+            temp = temp->left;
+        }
+        else if (temp->data < key)
+        {
+            temp = temp->right;
+        }
+        else if (temp->data == key)
+        {
+            break;
+        }
+    }
+    if (temp == NULL)
+    {
+        return root;
+    }
+    else
+    {
+        if (parent == temp)
+        {
+            if (temp->right == NULL && temp->left == NULL)
+            {
+                return NULL;
+            }
+            else if (temp->right == NULL && temp->left != NULL)
+            {
+                return temp->left;
+            }
+            else if (temp->right != NULL && temp->left == NULL)
+            {
+                return temp->right;
+            }
+            else if (temp->right != NULL && temp->left != NULL)
+            {
+                tree *traverse = temp->right;
+                while (traverse->left != NULL)
+                {
+                    traverse = traverse->left;
+                }
+                traverse->left = temp->left;
+                return temp->right;
+            }
+        }
+        while (parent != NULL)
+        {
+            if (parent->right == temp || parent->left == temp)
+            {
+                break;
+            }
+            else if (parent->data < temp->data)
+            {
+                parent = parent->right;
+            }
+            else if (parent->data > temp->data)
+            {
+                parent = parent->left;
+            }
+        }
+        if (parent->left == temp)
+        {
+            if (temp->right == NULL)
+            {
+                parent->left = temp->left;
+            }
+            else
+            {
+                parent->left = temp->right;
+                tree *traverse = temp->right;
+                while (traverse->left != NULL)
+                {
+                    traverse = traverse->left;
+                }
+                traverse->left = temp->left;
+            }
+        }
+        else if (parent->right == temp)
+        {
+            if (temp->left == NULL)
+            {
+                parent->right = temp->right;
+            }
+            else
+            {
+                parent->right = temp->left;
+                tree *traverse = temp->left;
+                while (traverse->right != NULL)
+                {
+                    traverse = traverse->right;
+                }
+                traverse->right = temp->right;
+            }
+        }
+        return root;
+    }
+}
+
 int main()
 {
     tree *main_tree;
@@ -457,6 +560,4 @@ int main()
     // {
     //     cout << my_node->data << endl;
     // }
-    
-
 }
