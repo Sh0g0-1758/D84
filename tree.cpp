@@ -34,6 +34,92 @@ public:
     }
 };
 
+threaded_tree *get_prev_first_right(vector<ll> store, ll i, threaded_tree *main_tree)
+{
+    while (i % 2 == 0)
+    {
+        i = i / 2;
+    }
+    if (i == 1)
+    {
+        return main_tree;
+    }
+    else
+    {
+        main_tree = main_tree->left;
+        stack<ll> direction;
+        while (i != 1)
+        {
+            if (i % 2 == 0)
+            {
+                direction.push(0);
+                i = i / 2;
+            }
+            else
+            {
+                direction.push(1);
+                i = (i - 1) / 2;
+            }
+        }
+        while (!direction.empty())
+        {
+            if (direction.top() == 0)
+            {
+                main_tree = main_tree->left;
+            }
+            else
+            {
+                main_tree = main_tree->right;
+            }
+            direction.pop();
+        }
+        return main_tree;
+    }
+}
+
+threaded_tree *get_prev_first_left(vector<ll> store, ll i, threaded_tree *main_tree)
+{
+    while ((i-1) % 2 == 0 && i != 1)
+    {
+        i = (i-1) / 2;
+    }
+    if (i == 1)
+    {
+        return main_tree;
+    }
+    else
+    {
+        main_tree = main_tree->left;
+        stack<ll> direction;
+        while (i != 1)
+        {
+            if (i % 2 == 0)
+            {
+                direction.push(0);
+                i = i / 2;
+            }
+            else
+            {
+                direction.push(1);
+                i = (i - 1) / 2;
+            }
+        }
+        while (!direction.empty())
+        {
+            if (direction.top() == 0)
+            {
+                main_tree = main_tree->left;
+            }
+            else
+            {
+                main_tree = main_tree->right;
+            }
+            direction.pop();
+        }
+        return main_tree;
+    }
+}
+
 threaded_tree *enter_threaded_tree()
 {
     ll n;
@@ -45,10 +131,14 @@ threaded_tree *enter_threaded_tree()
         cin >> mem;
         store[i] = (mem);
     }
-    threaded_tree *my_tree = new threaded_tree(store[1]);
+    threaded_tree *my_tree = new threaded_tree(-1);
+    my_tree->left_child = true;
+    my_tree->right_child = true;
+    my_tree->left = new threaded_tree(store[1]);
+    threaded_tree *traverse_temp_tree = my_tree->left;
     for (ll i = 1; i <= n; i++)
     {
-        threaded_tree *temp_tree = my_tree;
+        threaded_tree *temp_tree = traverse_temp_tree;
         ll temp = i;
         stack<ll> direction;
         while (temp != 1)
@@ -84,6 +174,8 @@ threaded_tree *enter_threaded_tree()
         else
         {
             temp_tree->left_child = false;
+            threaded_tree *prev = get_prev_first_right(store, i, my_tree);
+            temp_tree->left = prev;
         }
         if ((2 * (i)) + 1 <= n)
         {
@@ -93,6 +185,8 @@ threaded_tree *enter_threaded_tree()
         else
         {
             temp_tree->right_child = false;
+            threaded_tree *prev = get_prev_first_left(store, i, my_tree);
+            temp_tree->right = prev;
         }
     }
     return my_tree;
@@ -528,8 +622,10 @@ tree *deleteNode_from_BST(tree *root, int key)
 
 int main()
 {
-    tree *main_tree;
-    main_tree = enter_tree();
+    // tree *main_tree;
+    // main_tree = enter_tree();
+    threaded_tree *main_threaded_tree;
+    main_threaded_tree = enter_threaded_tree();
     // print_tree(main_tree);
     // cout << endl;
     // iterative_print_tree(main_tree);
